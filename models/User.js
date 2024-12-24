@@ -45,6 +45,10 @@ const UsersSchema = new mongoose.Schema({
     type: String,
     
   },
+  trades: {
+    type: Array,
+    
+  },
   kyc: {
     type: String,
     
