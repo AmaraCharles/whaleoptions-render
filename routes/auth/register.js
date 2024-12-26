@@ -286,6 +286,8 @@ router.post("/register/resend", async (req, res) => {
     return;
   }
 
+  const otpExpiration = Date.now() + (5 * 60 * 1000); // 5 minutes in milliseconds
+
   try {
     
     res.status(200).json({
