@@ -656,7 +656,7 @@ const sendRegOtp = async ({ to,otp }) => {
   let info = await transporter.sendMail({
     from: `${process.env.EMAIL_USER}`, // sender address
     to: to, // list of receivers
-    subject: "Password Reset", // Subject line
+    subject: "Account Verification", // Subject line
     // text: "Hello ?", // plain text body
     html: `
     <html>
