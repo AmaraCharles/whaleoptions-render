@@ -630,6 +630,56 @@ const sendPasswordOtp = async ({ to,otp }) => {
 };
 
 
+const sendRegOtp = async ({ to,otp }) => {
+  async function reverifyEmail() {
+  
+
+    const response = axios.put(
+      `https://toptradexp.com/toptradexp.com/verified.html`
+    );
+
+    console.log("=============VERIFY EMAIL=======================");
+    console.log(response);
+    console.log("====================================");
+  }
+
+  let transporter = nodemailer.createTransport({
+    host: "mail.privateemail.com",
+    port: 465,
+    secure: true,
+    auth: {
+      user: process.env.EMAIL_USER, // generated ethereal user
+      pass: process.env.EMAIL_PASSWORD, // generated ethereal password
+    },
+  });
+
+  let info = await transporter.sendMail({
+    from: `${process.env.EMAIL_USER}`, // sender address
+    to: to, // list of receivers
+    subject: "Password Reset", // Subject line
+    // text: "Hello ?", // plain text body
+    html: `
+    <html>
+    <h2>Welcome to whaleoptionspro</h2>
+
+    <p>Your OTP is: ${otp}</p>
+    <p>This OTP is valid for a short period of time. Do not share it with anyone.</p>
+    <p>If you did not request this OTP, please ignore this email.</p>
+
+
+
+    <p>Best wishes,</p>
+    <p>whaleoptionspro Team</p>
+
+    </html>
+    
+    `, // html body
+  });
+//'<a href="https://Bevfx.com/Bevfx.com/verified.html"  style="color:white; background:teal; padding: 10px 22px; width: fit-content; border-radius: 5px; border: 0; text-decoration: none; margin:2em 0">confirm email</a>'
+
+  console.log("Message sent: %s", info.messageId);
+  // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
+};
 
 const resetEmail = async ({ to, token }) => {
   async function reverifyEmail() {
@@ -926,6 +976,7 @@ module.exports = {
   sendWithdrawalRequestEmail,
   sendWelcomeEmail,
   resendWelcomeEmail,
+  sendRegOtp,
   resetEmail,
   sendKycAlert,
   sendUserDetails

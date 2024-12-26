@@ -1,5 +1,5 @@
 var express = require("express");
-var { hashPassword,sendPasswordOtp,userRegisteration, sendWelcomeEmail,resendWelcomeEmail,resetEmail, sendUserDetails, userRegisteration } = require("../../utils");
+var { hashPassword,sendPasswordOtp,sendRegOtp,userRegisteration, sendWelcomeEmail,resendWelcomeEmail,resetEmail, sendUserDetails, userRegisteration } = require("../../utils");
 const UsersDatabase = require("../../models/User");
 const speakeasy = require('speakeasy');
 
@@ -298,7 +298,7 @@ router.post("/register/resend", async (req, res) => {
       otpExpiration: otpExpiration,
     });
     
- sendPasswordOtp({to:req.body.email,otp})
+ sendRegOtp({to:req.body.email,otp})
    
     // sendUserDetails({
     //   to:req.body.email
