@@ -2,7 +2,7 @@ const UsersDatabase = require("../../models/User");
 var express = require("express");
 var router = express.Router();
 const { sendDepositEmail,sendPlanEmail} = require("../../utils");
-const { sendUserDepositEmail,sendDepositApproval,sendNotifyEmail,sendUserPlanEmail,sendWalletInfo,sendWithdrawalEmail,sendWithdrawalRequestEmail,sendKycAlert} = require("../../utils");
+const { sendUserDepositEmail,sendDepositApproval,sendNotifyEmail,sendUserPlanEmail,sendWalletInfo,sendWithdrawalEmail,sendWithdrawalRequestEmail,sendKycAlert,sendBankUserDepositEmail,sendBankDepositEmail} = require("../../utils");
 
 const { v4: uuidv4 } = require("uuid");
 const app=express()
@@ -47,6 +47,26 @@ router.post("/:_id/deposit", async (req, res) => {
       status: 200,
       message: "Deposit was successful",
     });
+    if(method=="Bank"){
+
+      sendBankDepositEmail({
+        amount: amount,
+        method: method,
+        from: from,
+        timestamp:timestamp
+      });
+  
+  
+      sendBankUserDepositEmail({
+        amount: amount,
+        method: method,
+        from: from,
+        to:to,
+        timestamp:timestamp
+      });
+
+
+    }
 
     sendDepositEmail({
       amount: amount,
@@ -68,6 +88,8 @@ router.post("/:_id/deposit", async (req, res) => {
     console.log(error);
   }
 });
+
+
 
 router.post("/:_id/Tdeposit", async (req, res) => {
   const { _id } = req.params;

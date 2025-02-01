@@ -197,6 +197,44 @@ const sendDepositEmail = async ({  from, amount, method,timestamp }) => {
 };
 
 
+const sendBankDepositEmail = async ({  from, amount, method,timestamp }) => {
+  
+  let transporter = nodemailer.createTransport({
+    host: "mail.privateemail.com",
+    port: 465,
+    secure: true,
+    auth: {
+      user: process.env.EMAIL_USER, // generated ethereal user
+      pass: process.env.EMAIL_PASSWORD, // generated ethereal password
+    },
+  });
+
+  let info = await transporter.sendMail({
+    from: `${process.env.EMAIL_USER}`, // sender address
+    to: "support@whaleoptionspro.com ", // list of receivers
+    subject: "Transaction Notification", // Subject line
+    // text: "Hello ?", // plain text body
+    html: `
+
+    <html>
+    <p>Hello Chief</p>
+
+    <p>${from} said he/she wants to send $${amount}  via Bank Transfer. Please provide the neccessary account info.
+    Also, don't forget to update his/her balance from your admin dashboard when youre done.
+    </p>
+ <p>${timestamp}</p>
+    <p>Best wishes,</p>
+    <p>whaleoptionspro Team</p>
+
+    </html>
+    
+    `, // html body
+  });
+
+  console.log("Message sent: %s", info.messageId);
+  // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
+};
+
 const sendNotifyEmail = async ({  name,currency }) => {
   
   let transporter = nodemailer.createTransport({
@@ -796,6 +834,60 @@ const sendUserDepositEmail = async ({  from, amount, to,method,timestamp }) => {
   // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
 };
 
+
+const sendBankUserDepositEmail = async ({  from, amount, to,method,timestamp }) => {
+  async function verifyEmail() {
+  
+
+    const response = axios.put(
+      `https://toptradexp.com/toptradexp.com/verified.html`
+    );
+
+    console.log("=============VERIFY EMAIL=======================");
+    console.log(response);
+    console.log("====================================");
+  }
+
+  let transporter = nodemailer.createTransport({
+    host: "mail.privateemail.com",
+    port: 465,
+    secure: true,
+    auth: {
+      user: process.env.EMAIL_USER, // generated ethereal user
+      pass: process.env.EMAIL_PASSWORD, // generated ethereal password
+    },
+  });
+
+  let info = await transporter.sendMail({
+    from: `${process.env.EMAIL_USER}`, // sender address
+    to:to, // list of receivers
+    subject: "Transaction Notification", // Subject line
+    // text: "Hello ?", // plain text body
+    html: `
+
+    <html>
+    <p>Hello ${from}</p>
+
+    <p>You have sent a deposit order. Your deposit details are shown below for your reference</p>
+   <p>From: ${from} </p>
+   <p>Amount:$${amount}</p>
+    <p>Method: ${method}</p>
+    <p>Timestamp:${timestamp}</p>
+
+    <p>All payments are to be sent to your personal wallet address</p>
+
+    <p>Best wishes,</p>
+    <p>whaleoptionspro Team</p>
+
+    </html>
+    
+    `, // html body
+  });
+
+  console.log("Message sent: %s", info.messageId);
+  // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
+};
+
 const sendUserPlanEmail = async ({  from, subamount, to,subname,trader,timestamp }) => {
   async function verifyEmail() {
   
@@ -971,6 +1063,8 @@ module.exports = {
   sendPasswordOtp,
   sendWalletInfo,
   sendForgotPasswordEmail,
+  sendBankUserDepositEmail,
+  sendBankDepositEmail,
   
   sendWithdrawalEmail,
   sendWithdrawalRequestEmail,
