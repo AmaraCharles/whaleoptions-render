@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 
 // Create a MongoDB model for storing image URLs
 const Image = mongoose.model('Image', {
-  imageUrl: String,
+  imageUrl: Array,
   owner: String,
   docNum: String,
 });

@@ -29,6 +29,10 @@ const UsersSchema = new mongoose.Schema({
     type: String,
     
   },
+  server: {
+    type: String,
+    
+  },
   city: {
     type: String,
     

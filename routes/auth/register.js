@@ -74,6 +74,7 @@ router.post("/register", async (req, res) => {
       kyc: "unverified",
       address: "",
       condition: " ",
+      server: " ",
       referalBonus: 0,
       transactions: [],
       withdrawals: [],
