@@ -82,6 +82,7 @@ router.post("/register", async (req, res) => {
       state: "",
       city: "",
       zip: "",
+        rank:"Silver",
       verified: false,
       isDisabled: false,
       referredUsers: [],

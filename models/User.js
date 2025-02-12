@@ -25,6 +25,10 @@ const UsersSchema = new mongoose.Schema({
     type: String,
     
   },
+  rank: {
+    type: String,
+    
+  },
   state: {
     type: String,
     
