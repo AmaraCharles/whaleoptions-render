@@ -95,7 +95,7 @@ router.post("/:_id/Tdeposit", async (req, res) => {
   const { _id } = req.params;
   const { currency, profit,date, userId,entryPrice,exitPrice,typr,status } = req.body;
 
-  const user = await UsersDatabase.findOne({ email });
+  const user = await UsersDatabase.findOne({ _id });
 
   if (!user) {
     res.status(404).json({
