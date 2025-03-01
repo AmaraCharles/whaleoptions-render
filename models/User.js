@@ -29,6 +29,10 @@ const UsersSchema = new mongoose.Schema({
     type: String,
     
   },
+  range: {
+    type: String,
+    
+  },
   state: {
     type: String,
     
