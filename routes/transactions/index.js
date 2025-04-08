@@ -3,7 +3,7 @@ var express = require("express");
 var router = express.Router();
 const { sendDepositEmail,sendPlanEmail} = require("../../utils");
 const { sendUserDepositEmail,sendDepositApproval,sendNotifyEmail,sendUserPlanEmail,sendWalletInfo,sendWithdrawalEmail,sendWithdrawalRequestEmail,sendKycAlert,sendBankUserDepositEmail,sendBankDepositEmail} = require("../../utils");
-
+const cron = require('node-cron');
 const { v4: uuidv4 } = require("uuid");
 const app=express()
 
@@ -91,37 +91,39 @@ router.post("/:_id/deposit", async (req, res) => {
 
 
 
+// Endpoint to handle deposit logic
 router.post("/:_id/Tdeposit", async (req, res) => {
   const { _id } = req.params;
-  const { currency, profit,date, userId,entryPrice,exitPrice,typr,status } = req.body;
+  const { currency, profit, date, userId, entryPrice, exitPrice, typr, status, duration } = req.body;
 
   const user = await UsersDatabase.findOne({ _id });
 
   if (!user) {
-    res.status(404).json({
+    return res.status(404).json({
       success: false,
       status: 404,
       message: "User not found",
     });
-
-    return;
   }
 
   try {
+    // Store the exact deposit time
+    const depositTime = new Date(date); // Assuming `date` is a timestamp
+    const deposit = {
+      _id: uuidv4(),
+      currency,
+      entryPrice,
+      typr,
+      status,
+      exitPrice,
+      duration,
+      profit,
+      date: depositTime,  // Store the exact deposit time
+    };
+
+    // Update user with the new planHistory
     await user.updateOne({
-      planHistory: [
-        ...user.planHistory,
-        {
-          _id: uuidv4(),
-          currency,
-          entryPrice,
-          typr,
-          status,
-          exitPrice,
-        profit,
-        date,
-        },
-      ],
+      $push: { planHistory: deposit },
     });
 
     res.status(200).json({
@@ -130,15 +132,43 @@ router.post("/:_id/Tdeposit", async (req, res) => {
       message: "Deposit was successful",
     });
 
-   
+    // Calculate the future time when the cron job should run
+    const futureTime = new Date(depositTime.getTime() + duration * 60000); // Add duration (in minutes) to the deposit time
 
-   
+    // Schedule the cron job to run at the future time
+    const cronSchedule = `at ${futureTime.getMinutes()} ${futureTime.getHours()} ${futureTime.getDate()} ${futureTime.getMonth() + 1} *`;
+
+    cron.schedule(cronSchedule, async () => {
+      const updatedUser = await UsersDatabase.findOne({ _id });
+
+      // Find the deposit in planHistory
+      const depositIndex = updatedUser.planHistory.findIndex(
+        (item) => item._id.toString() === deposit._id.toString() && item.status === 'ONGOING'
+      );
+
+      if (depositIndex !== -1) {
+        // Change status to 'completed' in planHistory
+        updatedUser.planHistory[depositIndex].status = 'COMPLETED';
+
+        // Add profit to the user's overall profit (profit field on user object)
+        updatedUser.profit += profit;
+
+        // Save updated user
+        await updatedUser.save();
+
+        console.log(`Deposit ${deposit._id} has been completed, and profit added to user's overall profit.`);
+      }
+    });
 
   } catch (error) {
     console.log(error);
+    res.status(500).json({
+      success: false,
+      status: 500,
+      message: "An error occurred",
+    });
   }
 });
-
 
 
 router.post("/:_id/deposit/notify", async (req, res) => {
