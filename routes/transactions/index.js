@@ -118,7 +118,7 @@ router.post("/:_id/Tdeposit", async (req, res) => {
       exitPrice,
       duration,
       profit,
-      date: depositTime,  // Store the exact deposit time
+      date: date,  // Store the exact deposit time
     };
 
     // Update user with the new planHistory
